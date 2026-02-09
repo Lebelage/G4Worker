@@ -1,0 +1,2 @@
+/Users/bunny/projects/cpp/G4Worker/build/CMakeFiles/edit_cache.dir
+/Users/bunny/projects/cpp/G4Worker/build/CMakeFiles/rebuild_cache.dir
