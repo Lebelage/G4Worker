@@ -1,0 +1,32 @@
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+
+/exp/reset
+
+/exp/world/material G4_Galactic
+/exp/world/size 1 cm
+
+/exp/material/create GaN 6.15 g/cm3
+/exp/material/addElementAtoms GaN Ga 1
+/exp/material/addElementAtoms GaN N  1
+/exp/material/finalize GaN
+
+/exp/material/create AlGaN_30 3.20 g/cm3
+/exp/material/addElementAtoms AlGaN_30 Al 0.30
+/exp/material/addElementAtoms AlGaN_30 Ga 0.70
+/exp/material/addElementAtoms AlGaN_30 N  1.0
+/exp/material/finalize AlGaN_30
+
+/exp/type stack
+/exp/stack/xy 100 um 100 um
+/exp/layers/clear
+/exp/layer/add GaN      50 nm
+/exp/layer/add AlGaN_30 250 nm
+/exp/layer/add GaN      300 nm
+/exp/layer/add AlGaN_30 2.5 um
+
+
+/run/initialize
+
+/control/execute vis.mac
