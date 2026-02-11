@@ -1,6 +1,7 @@
 #include "App.h"
 #include "GaN_AlGan_battery_exp.h"
 #include "ExperimentMessenger.h"
+#include "DetectorConstruction.h"
 
 #include <exception>
 
@@ -30,7 +31,9 @@ namespace G4Worker
 
             auto *phys = new FTFP_BERT();
             phys->ReplacePhysics(new G4EmStandardPhysics_option4());
+            
             runManager->SetUserInitialization(phys);
+            runManager->SetUserInitialization(new DetectorConstruction(cfg));
 
             uiManager.reset(G4UImanager::GetUIpointer());
 

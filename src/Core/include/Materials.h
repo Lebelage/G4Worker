@@ -6,10 +6,12 @@
 /// std
 #include <unordered_map>
 #include <string>
+#include <optional>
 
 class G4Material;
 class G4NistManager;
 struct ExperimentConfig;
+struct MaterialBuildSpec;
 
 namespace G4Worker
 {
@@ -17,14 +19,14 @@ namespace G4Worker
     {
     public:
         explicit Materials(const ExperimentConfig &cfg);
-        G4Material *Get(const G4String &name);
+        std::optional<G4Material*> Get(const G4String &name);
 
     private:
         const ExperimentConfig &fCfg;
         G4NistManager *fNist = nullptr;
         std::unordered_map<std::string, G4Material *> fCache;
 
-        G4Material *BuildFromSpec(const std::string &name, const struct MaterialBuildSpec &spec);
+        G4Material *BuildFromSpec(const std::string &name, const MaterialBuildSpec &spec);
     };
 
 }
