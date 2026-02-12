@@ -3,6 +3,7 @@
 /// Geant4
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
+#include "G4SystemOfUnits.hh"
 
 /// std
 #include <vector>
@@ -11,6 +12,12 @@ enum class ExpType
 {
     None,
     Stack
+};
+
+enum class SourceType
+{
+    Gun,
+    Decay
 };
 
 struct LayerSpec
@@ -35,6 +42,14 @@ struct MaterialBuildSpec
     std::vector<ElementMassSpec> mass;
 };
 
+struct GunSource
+{
+    G4String particle = "e-";
+    double energy = 100 * keV;
+    G4ThreeVector pos{0, 0, 0};
+    G4ThreeVector dir{0, 0, 1};
+};
+
 struct ExperimentConfig
 {
     // world
@@ -49,6 +64,10 @@ struct ExperimentConfig
     double stackY = 100.0; // mm
     G4ThreeVector stackPos{0, 0, 0};
     std::vector<LayerSpec> layers;
+
+    // source
+    SourceType sourceType = SourceType::Gun;
+    GunSource gun;
 
     // materials defined from macro
     std::unordered_map<std::string, MaterialBuildSpec> matBuild;

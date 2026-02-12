@@ -2,6 +2,7 @@
 #include "GaN_AlGan_battery_exp.h"
 #include "ExperimentMessenger.h"
 #include "DetectorConstruction.h"
+#include "SourceGenerator.h"
 
 #include <exception>
 
@@ -34,6 +35,7 @@ namespace G4Worker
             
             runManager->SetUserInitialization(phys);
             runManager->SetUserInitialization(new DetectorConstruction(cfg));
+            runManager->SetUserAction(new SourceGenerator(cfg));
 
             uiManager.reset(G4UImanager::GetUIpointer());
 

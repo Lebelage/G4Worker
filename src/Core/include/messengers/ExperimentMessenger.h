@@ -42,5 +42,14 @@ namespace G4Worker::Messengers
         G4UIcommand *fMatCreate = nullptr;
         G4UIcommand *fMatAddMass = nullptr;
         G4UIcommand *fMatFinalize = nullptr;
+
+        // Source
+        G4UIcmdWithAString *fSourceType = nullptr;
+
+        // Gun
+        G4UIcmdWithAString *fGunParticle = nullptr;
+        G4UIcmdWithADoubleAndUnit *fGunEnergy = nullptr;
+        G4UIcmdWith3VectorAndUnit *fGunPos = nullptr;
+        G4UIcommand *fGunDir = nullptr;
     };
 }

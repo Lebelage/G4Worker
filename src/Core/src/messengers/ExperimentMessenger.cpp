@@ -9,6 +9,7 @@
 #include "G4Tokenizer.hh"
 #include "G4UIcommand.hh"
 #include "G4Exception.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
 
 namespace G4Worker::Messengers
 {
@@ -66,6 +67,22 @@ namespace G4Worker::Messengers
         // /exp/material/finalize <mat>
         fMatFinalize = new G4UIcommand("/exp/material/finalize", this);
         fMatFinalize->SetParameter(new G4UIparameter("mat", 's', false));
+
+        // Source Type
+        fSourceType = new G4UIcmdWithAString("/exp/source/type", this);
+        fSourceType->SetCandidates("gun decay");
+
+        // Gun 
+        fGunParticle = new G4UIcmdWithAString("/exp/source/gun/particle", this);
+        fGunEnergy = new G4UIcmdWithADoubleAndUnit("/exp/source/gun/energy", this);
+        fGunEnergy->SetUnitCategory("Energy");
+        fGunPos = new G4UIcmdWith3VectorAndUnit("/exp/source/gun/pos", this);
+        fGunPos->SetUnitCategory("Length");
+
+        fGunDir = new G4UIcommand("/exp/source/gun/dir", this);
+        fGunDir->SetParameter(new G4UIparameter("dx", 'd', false));
+        fGunDir->SetParameter(new G4UIparameter("dy", 'd', false));
+        fGunDir->SetParameter(new G4UIparameter("dz", 'd', false));
     }
 
     G4Worker::Messengers::ExperimentMessenger::~ExperimentMessenger()
