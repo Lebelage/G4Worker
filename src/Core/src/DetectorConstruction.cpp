@@ -40,6 +40,9 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
     for (auto &L : fCfg.layers)
         totalZ += L.thickness;
 
+    fTotalZ = totalZ;
+    fStackTopZ = fCfg.stackPos.z() + totalZ/2.0;
+    
     // Stack container (vacuum)
     auto *solidStack = new G4Box("StackSolid", fCfg.stackX / 2, fCfg.stackY / 2, totalZ / 2);
     auto *logicStack = new G4LogicalVolume(solidStack, worldMat, "StackLV");

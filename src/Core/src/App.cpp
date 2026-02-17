@@ -3,6 +3,7 @@
 #include "ExperimentMessenger.h"
 #include "DetectorConstruction.h"
 #include "SourceGenerator.h"
+#include "RunAction.h"
 
 #include <exception>
 
