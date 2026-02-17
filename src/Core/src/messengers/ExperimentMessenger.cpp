@@ -288,5 +288,54 @@ namespace G4Worker::Messengers
             fCfg.geomDirty = true;
             return;
         }
+    
+        // --- Source & Gun ---
+        if (cmd == fSourceType)
+        {
+            if (value == "gun") fCfg.sourceType = SourceType::Gun;
+            else if (value == "decay") fCfg.sourceType = SourceType::Decay;
+            fCfg.beamDirty = true;
+            return;
+        }
+
+        if (cmd == fGunParticle)
+        {
+            fCfg.gun.particle = value;
+            fCfg.beamDirty = true;
+            return;
+        }
+
+        if (cmd == fGunEnergy)
+        {
+            fCfg.gun.energy = fGunEnergy->GetNewDoubleValue(value);
+            fCfg.beamDirty = true;
+            return;
+        }
+
+        if (cmd == fGunPos)
+        {
+            fCfg.gun.pos = fGunPos->GetNew3VectorValue(value);
+            fCfg.beamDirty = true;
+            return;
+        }
+
+        if (cmd == fGunDir)
+        {
+            G4Tokenizer tok(value);
+            auto dx = tok();
+            auto dy = tok();
+            auto dz = tok();
+            if (dx.empty() || dy.empty() || dz.empty())
+            {
+                G4Exception("ExperimentMessenger", "BadGunDir", FatalException,
+                            "Usage: /exp/source/gun/dir <dx> <dy> <dz>");
+            }
+            fCfg.gun.dir = G4ThreeVector(std::stod(dx), std::stod(dy), std::stod(dz));
+            
+            if (fCfg.gun.dir.mag2() > 0) fCfg.gun.dir.setMag(1.0);
+            
+            fCfg.beamDirty = true;
+            return;
+        }
     }
 }

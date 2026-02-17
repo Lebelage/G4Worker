@@ -7,6 +7,7 @@
 
 /// std
 #include <vector>
+#include <unordered_map>
 
 enum class ExpType
 {

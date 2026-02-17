@@ -19,24 +19,25 @@
 # World
 ############################
 /exp/world/material G4_Galactic
-/exp/world/size 1 cm
+/exp/world/size 0.1 mm
 
 ############################
 # Materials
 ############################
 
-# --- GaN ---
+# --- Материал: GaN ---
 /exp/material/create GaN 6.15 g/cm3
-/exp/material/addElementAtoms GaN Ga 1
-/exp/material/addElementAtoms GaN N  1
+/exp/material/addElementMass GaN Ga 0.8027   # ~69.72 г/моль (Ga=69.7, N=14) → Ga ~80%
+/exp/material/addElementMass GaN N  0.1973
 /exp/material/finalize GaN
 
-# --- Al0.30Ga0.70N ---
+# --- Материал: AlGaN_30 ---
 /exp/material/create AlGaN_30 3.20 g/cm3
-/exp/material/addElementAtoms AlGaN_30 Al 0.30
-/exp/material/addElementAtoms AlGaN_30 Ga 0.70
-/exp/material/addElementAtoms AlGaN_30 N  1.0
+/exp/material/addElementMass AlGaN_30 Al 0.139  # Примерные доли: Al 13.9%, Ga 67.3%, N 18.8%
+/exp/material/addElementMass AlGaN_30 Ga 0.673
+/exp/material/addElementMass AlGaN_30 N  0.188
 /exp/material/finalize AlGaN_30
+
 
 ############################
 # Geometry (stack)
@@ -63,10 +64,10 @@
 # Позиция источника в вакууме перед первой пластиной
 # Если стек центрирован в (0,0,0),
 # то верхняя поверхность ≈ + (totalThickness/2)
-/exp/source/gun/pos 0 0 -200 nm
+/exp/source/gun/pos 0 0 5 um
 
 # Пучок направлен вдоль +Z
-/exp/source/gun/dir 0 0 1
+/exp/source/gun/dir 0 0 -1
 
 ############################
 # Initialize kernel
@@ -81,4 +82,4 @@
 ############################
 # (Optional) Visualization
 ############################
-#/control/execute vis.mac
+/control/execute vis.mac

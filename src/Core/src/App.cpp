@@ -8,6 +8,7 @@
 
 #include "FTFP_BERT.hh"
 #include "G4EmStandardPhysics_option4.hh"
+
 namespace G4Worker
 {
     G4Worker::App::App(int argc, char **argv)
