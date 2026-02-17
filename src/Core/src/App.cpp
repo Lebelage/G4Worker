@@ -4,6 +4,7 @@
 #include "DetectorConstruction.h"
 #include "SourceGenerator.h"
 #include "RunAction.h"
+#include "SteppingAction.h"
 
 #include <exception>
 
@@ -34,10 +35,18 @@ namespace G4Worker
 
             auto *phys = new FTFP_BERT();
             phys->ReplacePhysics(new G4EmStandardPhysics_option4());
-            
+
             runManager->SetUserInitialization(phys);
             runManager->SetUserInitialization(new DetectorConstruction(cfg));
             runManager->SetUserAction(new SourceGenerator(cfg));
+
+            runManager->SetUserAction(new RunAction());
+
+            const auto *det = static_cast<const G4Worker::DetectorConstruction *>(
+                G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+                
+            runManager->SetUserAction(new SteppingAction(det));
+
 
             uiManager.reset(G4UImanager::GetUIpointer());
 

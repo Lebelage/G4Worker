@@ -1,0 +1,13 @@
+#pragma once
+#include "G4UserSteppingAction.hh"
+
+namespace G4Worker { class DetectorConstruction; }
+
+class SteppingAction : public G4UserSteppingAction {
+public:
+  explicit SteppingAction(const G4Worker::DetectorConstruction* det);
+  void UserSteppingAction(const G4Step* step) override;
+
+private:
+  const G4Worker::DetectorConstruction* fDet = nullptr;
+};

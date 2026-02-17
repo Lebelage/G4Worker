@@ -1,0 +1,60 @@
+#include "SteppingAction.h"
+
+#include "DetectorConstruction.h"
+
+#include "G4Step.hh"
+#include "G4RunManager.hh"
+#include "G4Event.hh"
+#include "G4AnalysisManager.hh"
+#include "G4TouchableHandle.hh"
+#include "G4VPhysicalVolume.hh"
+
+SteppingAction::SteppingAction(const G4Worker::DetectorConstruction* det) : fDet(det) {}
+
+void SteppingAction::UserSteppingAction(const G4Step* step)
+{
+  const G4double edep = step->GetTotalEnergyDeposit();
+  if (edep <= 0.) return;
+
+  auto pre  = step->GetPreStepPoint();
+  auto post = step->GetPostStepPoint();
+
+  auto vol = pre->GetTouchableHandle()->GetVolume();
+  if (!vol) return;
+
+  // Ваши слои размещаются как "LayerPV" (см. new G4PVPlacement(..., "LayerPV", ...))
+  if (vol->GetName() != "LayerPV") return;
+
+  // координата шага
+  const G4double zMid = 0.5*(pre->GetPosition().z() + post->GetPosition().z());
+
+  // глубина внутрь стека (0 на верхней поверхности, дальше по лучу)
+  const G4double depth = fDet->GetStackTopZ() - zMid;
+
+  // Можно отрезать всё вне стека (на всякий)
+  if (depth < 0.0 || depth > fDet->GetTotalThickness()) return;
+
+  // IDs
+  const auto* evt = G4RunManager::GetRunManager()->GetCurrentEvent();
+  const G4int eventID = evt ? evt->GetEventID() : -1;
+
+  const auto* tr = step->GetTrack();
+  const G4int trackID = tr->GetTrackID();
+  const G4int stepNo  = tr->GetCurrentStepNumber();
+
+  const G4int copyNo = pre->GetTouchableHandle()->GetCopyNumber(); // номер слоя 0..N-1
+
+  auto* ana = G4AnalysisManager::Instance();
+
+  // H1(0): E(depth)
+  ana->FillH1(0, depth, edep);
+
+  // ntuple: edep за шаг
+  ana->FillNtupleIColumn(0, eventID);
+  ana->FillNtupleIColumn(1, trackID);
+  ana->FillNtupleIColumn(2, stepNo);
+  ana->FillNtupleIColumn(3, copyNo);
+  ana->FillNtupleDColumn(4, depth);
+  ana->FillNtupleDColumn(5, edep);
+  ana->AddNtupleRow();
+}
