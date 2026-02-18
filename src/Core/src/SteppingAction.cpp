@@ -22,7 +22,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   auto vol = pre->GetTouchableHandle()->GetVolume();
   if (!vol) return;
 
-  // Ваши слои размещаются как "LayerPV" (см. new G4PVPlacement(..., "LayerPV", ...))
+  // слои размещаются как "LayerPV" (new G4PVPlacement(..., "LayerPV", ...))
   if (vol->GetName() != "LayerPV") return;
 
   // координата шага
@@ -31,7 +31,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   // глубина внутрь стека (0 на верхней поверхности, дальше по лучу)
   const G4double depth = fDet->GetStackTopZ() - zMid;
 
-  // Можно отрезать всё вне стека (на всякий)
   if (depth < 0.0 || depth > fDet->GetTotalThickness()) return;
 
   // IDs
@@ -42,7 +41,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   const G4int trackID = tr->GetTrackID();
   const G4int stepNo  = tr->GetCurrentStepNumber();
 
-  const G4int copyNo = pre->GetTouchableHandle()->GetCopyNumber(); // номер слоя 0..N-1
+  const G4int copyNo = pre->GetTouchableHandle()->GetCopyNumber();
 
   auto* ana = G4AnalysisManager::Instance();
 

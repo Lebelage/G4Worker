@@ -35,7 +35,7 @@ G4Worker::RunAction::~RunAction()
 void G4Worker::RunAction::BeginOfRunAction(const G4Run *)
 {
     auto *ana = G4AnalysisManager::Instance();
-    ana->OpenFile("out"); // out.root
+    ana->OpenFile("out");
 }
 
 void G4Worker::RunAction::EndOfRunAction(const G4Run *)
