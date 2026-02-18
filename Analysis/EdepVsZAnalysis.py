@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 FNAME = "build/out_h1_Edep_vs_depth.csv"
-N_EVENTS = 1_000_000
+N_EVENTS = 10_000
 
 def parse_h1d_csv(fname: str):
     axis_re = re.compile(r"#axis\s+fixed\s+(\d+)\s+([0-9.eE+-]+)\s+([0-9.eE+-]+)")

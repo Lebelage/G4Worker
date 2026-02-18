@@ -16,6 +16,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   const G4double edep = step->GetTotalEnergyDeposit();
   if (edep <= 0.) return;
 
+  auto dx = step->GetStepLength() ;
+
   auto pre  = step->GetPreStepPoint();
   auto post = step->GetPostStepPoint();
 
@@ -47,6 +49,10 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
   // H1(0): E(depth)
   ana->FillH1(0, depth, edep);
+
+  //if (dx > 0 && edep > 0) ana->FillH1(1, edep/dx);
+
+  if (edep > 0) ana->FillH1(1, edep);
 
   // ntuple: edep за шаг
   ana->FillNtupleIColumn(0, eventID);

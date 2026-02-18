@@ -11,11 +11,15 @@ G4Worker::RunAction::RunAction()
     ana->SetNtupleMerging(true);
 
     // depth: 0..3.1 um
-    const G4int nbins = 3000; // 10 nm на бин
+    const G4int nbins = 310; // 10 nm на бин
     const G4double dmin = 0.0;
     const G4double dmax = 3.1 * um;
     ana->CreateH1("Edep_vs_depth", "Edep vs depth; depth [um]; Edep [MeV]",
                   nbins, dmin, dmax);
+
+    ana->CreateH1("Edep_step", "Energy deposit per step; dE (MeV); counts",
+              400, 0.0, 0.01*MeV);
+
 
     ana->CreateNtuple("steps", "Step edep in layers");
     ana->CreateNtupleIColumn("eventID"); // 0

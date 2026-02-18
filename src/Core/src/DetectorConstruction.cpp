@@ -6,9 +6,11 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4Exception.hh"
+#include "G4UserLimits.hh"
 
 G4Worker::DetectorConstruction::DetectorConstruction(const ExperimentConfig &cfg) : fCfg{cfg}
-{}
+{
+}
 
 G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
 {
@@ -41,8 +43,8 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
         totalZ += L.thickness;
 
     fTotalZ = totalZ;
-    fStackTopZ = fCfg.stackPos.z() + totalZ/2.0;
-    
+    fStackTopZ = fCfg.stackPos.z() + totalZ / 2.0;
+
     // Stack container (vacuum)
     auto *solidStack = new G4Box("StackSolid", fCfg.stackX / 2, fCfg.stackY / 2, totalZ / 2);
     auto *logicStack = new G4LogicalVolume(solidStack, worldMat, "StackLV");
@@ -59,6 +61,11 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
 
         auto *solidLayer = new G4Box("LayerSolid", fCfg.stackX / 2, fCfg.stackY / 2, L.thickness / 2);
         auto *logicLayer = new G4LogicalVolume(solidLayer, mat, "LayerLV");
+
+        ///limits
+        auto *limits = new G4UserLimits();
+        limits->SetMaxAllowedStep(1 * nm); 
+        logicLayer->SetUserLimits(limits);
 
         zCursor -= L.thickness / 2.0;
         new G4PVPlacement(nullptr, {0, 0, zCursor}, logicLayer, "LayerPV", logicStack, false, copyNo);

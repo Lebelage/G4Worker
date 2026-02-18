@@ -10,6 +10,7 @@
 
 #include "FTFP_BERT.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "G4StepLimiterPhysics.hh"
 
 namespace G4Worker
 {
@@ -35,6 +36,7 @@ namespace G4Worker
 
             auto *phys = new FTFP_BERT();
             phys->ReplacePhysics(new G4EmStandardPhysics_option4());
+            phys->RegisterPhysics(new G4StepLimiterPhysics());
 
             runManager->SetUserInitialization(phys);
             runManager->SetUserInitialization(new DetectorConstruction(cfg));
@@ -44,9 +46,8 @@ namespace G4Worker
 
             const auto *det = static_cast<const G4Worker::DetectorConstruction *>(
                 G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-                
-            runManager->SetUserAction(new SteppingAction(det));
 
+            runManager->SetUserAction(new SteppingAction(det));
 
             uiManager.reset(G4UImanager::GetUIpointer());
 
@@ -59,10 +60,9 @@ namespace G4Worker
             }
             else
             {
-                // Интерактивный режим
-                uiManager->ApplyCommand("/control/execute init_vis.mac");
-                ui->SessionStart();
 
+                uiManager->ApplyCommand("/control/execute init_vis.mac");          
+                ui->SessionStart();
                 ui.release();
             }
 
