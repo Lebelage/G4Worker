@@ -8,6 +8,7 @@
 #include "G4AnalysisManager.hh"
 #include "G4TouchableHandle.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4SystemOfUnits.hh"
 
 SteppingAction::SteppingAction(const G4Worker::DetectorConstruction* det) : fDet(det) {}
 
@@ -48,11 +49,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   auto* ana = G4AnalysisManager::Instance();
 
   // H1(0): E(depth)
+
   ana->FillH1(0, depth, edep);
 
   //if (dx > 0 && edep > 0) ana->FillH1(1, edep/dx);
 
-  if (edep > 0) ana->FillH1(1, edep);
+  //if (edep > 0) ana->FillH1(1, edep);
 
   // ntuple: edep за шаг
   ana->FillNtupleIColumn(0, eventID);

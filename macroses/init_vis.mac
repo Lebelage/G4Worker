@@ -27,22 +27,22 @@
 
 # --- Материал: GaN ---
 /exp/material/create GaN 6.15 g/cm3
-/exp/material/addElementMass GaN Ga 69.723
-/exp/material/addElementMass GaN N  14.0067
+/exp/material/addElementMass GaN Ga 0.8326
+/exp/material/addElementMass GaN N  0.1674
 /exp/material/finalize GaN
 
 # --- Материал: AlGaN_30 ---
-/exp/material/create AlGaN_30 3.20 g/cm3
-/exp/material/addElementMass AlGaN_30 Al 26.9815385
-/exp/material/addElementMass AlGaN_30 Ga 69.723
-/exp/material/addElementMass AlGaN_30 N  14.0067
+/exp/material/create AlGaN_30 4.75 g/cm3
+/exp/material/addElementMass AlGaN_30 Al 0.1135
+/exp/material/addElementMass AlGaN_30 Ga 0.6846
+/exp/material/addElementMass AlGaN_30 N  0.2019
 /exp/material/finalize AlGaN_30
 
 # --- Материал: InGaN_20 ---
-/exp/material/create InGaN_20 6.282 g/cm3
-/exp/material/addElementMass InGaN_20 In 114.818
-/exp/material/addElementMass InGaN_20 Ga 69.723
-/exp/material/addElementMass InGaN_20 N  14.0067
+/exp/material/create InGaN_20 6.35 g/cm3
+/exp/material/addElementMass InGaN_20 In 0.246
+/exp/material/addElementMass InGaN_20 Ga 0.597
+/exp/material/addElementMass InGaN_20 N  0.157
 /exp/material/finalize InGaN_20
 
 ############################
@@ -54,7 +54,7 @@
 /exp/layers/clear
 
 # From beam side (+Z direction)
-/exp/layer/add GaN      50 nm
+/exp/layer/add GaN 50 nm
 /exp/layer/add AlGaN_30 250 nm
 /exp/layer/add InGaN_20 300 nm
 /exp/layer/add AlGaN_30 2.5 um
@@ -83,7 +83,7 @@
 ############################
 # Run
 ############################
-/run/beamOn 1000
+/run/beamOn 10000
 
 ############################
 # (Optional) Visualization
