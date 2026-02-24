@@ -33,7 +33,7 @@
 
 # --- Материал: AlGaN_30 ---
 /exp/material/create AlGaN_30 4.75 g/cm3
-/exp/material/addElementMass AlGaN_30 Al 0.1135
+/exp/material/addElementMass AlGaN_30 Al 0.114
 /exp/material/addElementMass AlGaN_30 Ga 0.6846
 /exp/material/addElementMass AlGaN_30 N  0.2019
 /exp/material/finalize AlGaN_30
@@ -63,17 +63,12 @@
 # Electron gun source
 ############################
 
-/exp/source/type gun
-/exp/source/gun/particle e-
-/exp/source/gun/energy 10 keV
+/exp/source/type gun #Создание источника в виде пушки
+/exp/source/gun/particle e- #Частица которой пушка будет стрелять
+/exp/source/gun/energy 10 keV #Начальная энергия частицы
 
-# Позиция источника в вакууме перед первой пластиной
-# Если стек центрирован в (0,0,0),
-# то верхняя поверхность ≈ + (totalThickness/2)
-/exp/source/gun/pos 0 0 20 um
-
-# Пучок направлен вдоль +Z
-/exp/source/gun/dir 0 0 -1
+/exp/source/gun/pos 0 0 20 um #Поместить центр пушки в данную точку пространства (x,y,z)
+/exp/source/gun/dir 0 0 -1 #Направить пушку вдоль вектора (x,y,z)
 
 ############################
 # Initialize kernel
