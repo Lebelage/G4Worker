@@ -22,11 +22,25 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   auto pre  = step->GetPreStepPoint();
   auto post = step->GetPostStepPoint();
 
-  auto vol = pre->GetTouchableHandle()->GetVolume();
-  if (!vol) return;
+  auto preVol = pre->GetTouchableHandle()->GetVolume();
+  auto postVol = post->GetTouchableHandle()->GetVolume();
+
+  if (!preVol || !postVol) return;
 
   // слои размещаются как "LayerPV" (new G4PVPlacement(..., "LayerPV", ...))
-  if (vol->GetName() != "LayerPV") return;
+  //if (vol->GetName() != "LayerPV") return;
+
+  //проверка на отражение(сбор)
+  if(preVol->GetName() == "LayerPV" && postVol->GetName() != "LayerPv")
+  {
+    
+  }
+
+  //проверка на вхождение(сбор)
+  if(preVol->GetName() != "LayerPV" && postVol->GetName() == "LayerPv")
+  {
+
+  }
 
   // координата шага
   const G4double zMid = 0.5*(pre->GetPosition().z() + post->GetPosition().z());

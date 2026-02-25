@@ -27,23 +27,23 @@
 
 # --- Материал: GaN ---
 /exp/material/create GaN 6.15 g/cm3
-/exp/material/addElementMass GaN Ga 0.8326
-/exp/material/addElementMass GaN N  0.1674
+/exp/material/addMassFraction GaN Ga 0.8326
+/exp/material/addMassFraction GaN N  0.1674
 /exp/material/finalize GaN
 
-# --- Материал: AlGaN_30 ---
-/exp/material/create AlGaN_30 4.75 g/cm3
-/exp/material/addElementMass AlGaN_30 Al 0.114
-/exp/material/addElementMass AlGaN_30 Ga 0.6846
-/exp/material/addElementMass AlGaN_30 N  0.2019
-/exp/material/finalize AlGaN_30
+# --- Материал: AlGaN ---
+/exp/material/create AlGaN 6.15 g/cm3
+/exp/material/addMassFraction AlGaN Al 0.00458
+/exp/material/addMassFraction AlGaN Ga 0.9478
+/exp/material/addMassFraction AlGaN N  0.04757
+/exp/material/finalize AlGaN
 
-# --- Материал: InGaN_20 ---
-/exp/material/create InGaN_20 6.35 g/cm3
-/exp/material/addElementMass InGaN_20 In 0.246
-/exp/material/addElementMass InGaN_20 Ga 0.597
-/exp/material/addElementMass InGaN_20 N  0.157
-/exp/material/finalize InGaN_20
+# --- Материал: InGaN ---
+/exp/material/create InGaN 6.15 g/cm3
+/exp/material/addMassFraction InGaN In 0.0078
+/exp/material/addMassFraction InGaN Ga 0.9448
+/exp/material/addMassFraction InGaN N  0.0474
+/exp/material/finalize InGaN
 
 ############################
 # Geometry (stack)
@@ -55,9 +55,9 @@
 
 # From beam side (+Z direction)
 /exp/layer/add GaN 50 nm
-/exp/layer/add AlGaN_30 250 nm
-/exp/layer/add InGaN_20 300 nm
-/exp/layer/add AlGaN_30 2.5 um
+/exp/layer/add AlGaN 250 nm
+/exp/layer/add InGaN 300 nm
+/exp/layer/add AlGaN 2.5 um
 
 ############################
 # Electron gun source
@@ -78,7 +78,8 @@
 ############################
 # Run
 ############################
-/run/beamOn 10000
+/run/beamOn 1000000
+/run/numberOfThreads 8
 
 ############################
 # (Optional) Visualization

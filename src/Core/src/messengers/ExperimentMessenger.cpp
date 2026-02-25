@@ -58,8 +58,8 @@ namespace G4Worker::Messengers
         fMatCreate->SetParameter(new G4UIparameter("density", 'd', false));
         fMatCreate->SetParameter(new G4UIparameter("densUnit", 's', false));
 
-        // /exp/material/addElementMass <mat> <el> <fraction>
-        fMatAddMass = new G4UIcommand("/exp/material/addElementMass", this);
+        // /exp/material/addMassFraction <mat> <el> <fraction>
+        fMatAddMass = new G4UIcommand("/exp/material/addMassFraction", this);
         fMatAddMass->SetParameter(new G4UIparameter("mat", 's', false));
         fMatAddMass->SetParameter(new G4UIparameter("el", 's', false));
         fMatAddMass->SetParameter(new G4UIparameter("fraction", 'd', false));

@@ -30,6 +30,8 @@ namespace G4Worker
             runManager = std::make_unique<G4RunManager>();
             visManager = std::make_unique<G4VisExecutive>();
 
+            runManager->SetNumberOfThreads(8);
+
             G4Worker::Messengers::ExperimentMessenger expMessenger(cfg);
 
             visManager->Initialize();
