@@ -7,8 +7,9 @@
 #include "G4PVPlacement.hh"
 #include "G4Exception.hh"
 #include "G4UserLimits.hh"
+#include "G4NistManager.hh"
 
-G4Worker::DetectorConstruction::DetectorConstruction(const ExperimentConfig &cfg) : fCfg{cfg}
+G4Worker::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fCfg{cfg}
 {
 }
 
@@ -17,8 +18,20 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
     if (fCfg.type == ExpType::Stack)
         return BuildStack();
 
-    G4Exception("DetectorConstruction", "NoType", FatalException, "Set /exp/type first.");
-    return nullptr;
+    if (fCfg.type == ExpType::None)
+    {
+        auto worldMat = G4NistManager::Instance()
+                            ->FindOrBuildMaterial("G4_Galactic");
+
+        auto solidWorld =
+            new G4Box("World", 1 * mm, 1 * mm, 1 * mm);
+
+        auto logicWorld =
+            new G4LogicalVolume(solidWorld, worldMat, "World");
+
+        return new G4PVPlacement(
+            nullptr, {}, logicWorld, "World", nullptr, false, 0);
+    }
 }
 
 G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
@@ -62,9 +75,9 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
         auto *solidLayer = new G4Box("LayerSolid", fCfg.stackX / 2, fCfg.stackY / 2, L.thickness / 2);
         auto *logicLayer = new G4LogicalVolume(solidLayer, mat, "LayerLV");
 
-        ///limits
+        /// limits
         auto *limits = new G4UserLimits();
-        limits->SetMaxAllowedStep(1 * nm); 
+        limits->SetMaxAllowedStep(1 * nm);
         logicLayer->SetUserLimits(limits);
 
         zCursor -= L.thickness / 2.0;

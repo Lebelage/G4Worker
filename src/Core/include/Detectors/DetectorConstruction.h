@@ -8,7 +8,7 @@ namespace G4Worker
     class DetectorConstruction : public G4VUserDetectorConstruction
     {
     public:
-        explicit DetectorConstruction(const ExperimentConfig &cfg);
+        explicit DetectorConstruction(ExperimentConfig &cfg);
         ~DetectorConstruction() override = default;
 
         G4VPhysicalVolume *Construct() override;
@@ -21,7 +21,7 @@ namespace G4Worker
         G4VPhysicalVolume *BuildStack();
 
     private:
-        const ExperimentConfig &fCfg;
+        ExperimentConfig &fCfg;
         G4double fTotalZ = 0.0;
         G4double fStackTopZ = 0.0;
     };

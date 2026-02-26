@@ -4,6 +4,7 @@
 #include "G4AnalysisManager.hh"
 #include "G4SystemOfUnits.hh"
 
+
 G4Worker::RunAction::RunAction()
 {
     auto *ana = G4AnalysisManager::Instance();
@@ -19,7 +20,6 @@ G4Worker::RunAction::RunAction()
 
     // ana->CreateH1("Edep_step", "Energy deposit per step; dE (MeV); counts",
     //           400, 0.0, 0.01*MeV);
-
 
     ana->CreateNtuple("steps", "Step edep in layers");
     ana->CreateNtupleIColumn("eventID"); // 0
