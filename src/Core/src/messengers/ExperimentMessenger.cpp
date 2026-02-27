@@ -14,265 +14,241 @@
 namespace G4Worker::Messengers
 {
 
-static ExpType ParseType(const G4String& s)
-{
-    if (s == "stack") return ExpType::Stack;
-    return ExpType::None;
-}
-
-// ------------------------------------------------------------
-
-ExperimentMessenger::ExperimentMessenger(ExperimentConfig& cfg)
-    : fCfg(cfg)
-{
-    fDir = new G4UIdirectory("/exp/");
-    fDir->SetGuidance("Experiment configuration");
-
-    fReset = new G4UIcommand("/exp/reset", this);
-
-    fType = new G4UIcmdWithAString("/exp/type", this);
-
-    fWorldMat  = new G4UIcmdWithAString("/exp/world/material", this);
-    fWorldSize = new G4UIcmdWithADoubleAndUnit("/exp/world/size", this);
-    fWorldSize->SetUnitCategory("Length");
-
-    fStackXY = new G4UIcommand("/exp/stack/xy", this);
-    fStackXY->SetParameter(new G4UIparameter("x", 'd', false));
-    fStackXY->SetParameter(new G4UIparameter("xUnit", 's', false));
-    fStackXY->SetParameter(new G4UIparameter("y", 'd', false));
-    fStackXY->SetParameter(new G4UIparameter("yUnit", 's', false));
-
-    fLayersClear = new G4UIcommand("/exp/layers/clear", this);
-
-    fLayerAdd = new G4UIcommand("/exp/layer/add", this);
-    fLayerAdd->SetParameter(new G4UIparameter("mat", 's', false));
-    fLayerAdd->SetParameter(new G4UIparameter("th", 'd', false));
-    fLayerAdd->SetParameter(new G4UIparameter("unit", 's', false));
-
-    fMatCreate = new G4UIcommand("/exp/material/create", this);
-    fMatCreate->SetParameter(new G4UIparameter("name", 's', false));
-    fMatCreate->SetParameter(new G4UIparameter("density", 'd', false));
-    fMatCreate->SetParameter(new G4UIparameter("densUnit", 's', false));
-
-    fMatAddMass = new G4UIcommand("/exp/material/addMassFraction", this);
-    fMatAddMass->SetParameter(new G4UIparameter("mat", 's', false));
-    fMatAddMass->SetParameter(new G4UIparameter("el", 's', false));
-    fMatAddMass->SetParameter(new G4UIparameter("fraction", 'd', false));
-
-    fMatFinalize = new G4UIcommand("/exp/material/finalize", this);
-    fMatFinalize->SetParameter(new G4UIparameter("mat", 's', false));
-
-    fSourceType = new G4UIcmdWithAString("/exp/source/type", this);
-    fSourceType->SetCandidates("gun decay");
-
-    fGunParticle = new G4UIcmdWithAString("/exp/source/gun/particle", this);
-    fGunEnergy   = new G4UIcmdWithADoubleAndUnit("/exp/source/gun/energy", this);
-    fGunEnergy->SetUnitCategory("Energy");
-
-    fGunPos = new G4UIcmdWith3VectorAndUnit("/exp/source/gun/pos", this);
-    fGunPos->SetUnitCategory("Length");
-
-    fGunDir = new G4UIcommand("/exp/source/gun/dir", this);
-    fGunDir->SetParameter(new G4UIparameter("dx", 'd', false));
-    fGunDir->SetParameter(new G4UIparameter("dy", 'd', false));
-    fGunDir->SetParameter(new G4UIparameter("dz", 'd', false));
-}
-
-// ------------------------------------------------------------
-
-ExperimentMessenger::~ExperimentMessenger()
-{
-    delete fMatFinalize;
-    delete fMatAddMass;
-    delete fMatCreate;
-    delete fLayerAdd;
-    delete fLayersClear;
-    delete fStackXY;
-    delete fWorldSize;
-    delete fWorldMat;
-    delete fType;
-    delete fReset;
-    delete fDir;
-}
-
-// ------------------------------------------------------------
-
-void ExperimentMessenger::SetNewValue(G4UIcommand* cmd, G4String value)
-{
-    auto* rm = G4RunManager::GetRunManager();
-
-    auto markGeom = [&]() {
-        if (rm) rm->GeometryHasBeenModified();
-    };
-
-    auto markPhysics = [&]() {
-        if (rm) rm->PhysicsHasBeenModified();
-    };
-
-    // --------------------------------------------------------
-    // RESET
-    if (cmd == fReset)
+    static ExpType ParseType(const G4String &s)
     {
-        fCfg = ExperimentConfig{};
-        markGeom();
-        return;
+        if (s == "stack")
+            return ExpType::Stack;
+        return ExpType::None;
     }
 
-    // --------------------------------------------------------
-    // TYPE
-    if (cmd == fType)
+    // ------------------------------------------------------------
+
+    ExperimentMessenger::ExperimentMessenger(ExperimentConfig &cfg)
+        : fCfg(cfg)
     {
-        fCfg.type = ParseType(value);
-        markGeom();
-        return;
+        G4UICommandBuilder builder(this);
+
+        fDir = builder.Directory("/exp/", "Experiment configuration");
+
+        fReset = builder.Command("/exp/reset");
+        fType = builder.String("/exp/type");
+
+        fWorldMat = builder.String("/exp/world/material");
+        fWorldSize = builder.DoubleUnit("/exp/world/size", "Length");
+
+        fStackXY = builder.Params("/exp/stack/xy",
+                                  Param("x", 'd'),
+                                  Param("xUnit", 's'),
+                                  Param("y", 'd'),
+                                  Param("yUnit", 's'));
+
+        fLayersClear = builder.Command("/exp/layers/clear");
+
+        fLayerAdd = builder.Params("/exp/layer/add",
+                                   Param("mat", 's'),
+                                   Param("th", 'd'),
+                                   Param("unit", 's'));
+
+        fMatCreate = builder.Params("/exp/material/create",
+                                    Param("name", 's'),
+                                    Param("density", 'd'),
+                                    Param("densUnit", 's'));
+
+        fMatAddMass = builder.Params("/exp/material/addMassFraction",
+                                     Param("mat", 's'),
+                                     Param("el", 's'),
+                                     Param("fraction", 'd'));
+
+        fMatFinalize = builder.Params("/exp/material/finalize",
+                                      Param("mat", 's'));
+
+        fSourceType = builder.Candidates("/exp/source/type", "gun decay");
+
+        fGunParticle = builder.String("/exp/source/gun/particle");
+
+        fGunEnergy = builder.DoubleUnit("/exp/source/gun/energy", "Energy");
+
+        fGunPos = builder.Vec3Unit("/exp/source/gun/pos", "Length");
+
+        fGunDir = builder.Params("/exp/source/gun/dir",
+                                 Param("dx", 'd'),
+                                 Param("dy", 'd'),
+                                 Param("dz", 'd'));
     }
 
-    // --------------------------------------------------------
-    // WORLD
-    if (cmd == fWorldMat)
+    // ------------------------------------------------------------
+
+    ExperimentMessenger::~ExperimentMessenger()
     {
-        fCfg.worldMaterial = value;
-        markGeom();
-        return;
+        delete fMatFinalize;
+        delete fMatAddMass;
+        delete fMatCreate;
+        delete fLayerAdd;
+        delete fLayersClear;
+        delete fStackXY;
+        delete fWorldSize;
+        delete fWorldMat;
+        delete fType;
+        delete fReset;
+        delete fDir;
     }
 
-    if (cmd == fWorldSize)
+    // ------------------------------------------------------------
+
+    void ExperimentMessenger::SetNewValue(G4UIcommand *cmd, G4String value)
     {
-        fCfg.worldSize = fWorldSize->GetNewDoubleValue(value);
-        markGeom();
-        return;
+        // --------------------------------------------------------
+        // RESET
+        if (cmd == fReset)
+        {
+            fCfg = ExperimentConfig{};
+            return;
+        }
+
+        // --------------------------------------------------------
+        // TYPE
+        if (cmd == fType)
+        {
+            fCfg.type = ParseType(value);
+            return;
+        }
+
+        // --------------------------------------------------------
+        // WORLD
+        if (cmd == fWorldMat)
+        {
+            fCfg.worldMaterial = value;
+            return;
+        }
+
+        if (cmd == fWorldSize)
+        {
+            fCfg.worldSize = fWorldSize->GetNewDoubleValue(value);
+            return;
+        }
+
+        // --------------------------------------------------------
+        // STACK SIZE
+        if (cmd == fStackXY)
+        {
+            G4Tokenizer tok(value);
+            auto xs = tok();
+            auto xu = tok();
+            auto ys = tok();
+            auto yu = tok();
+
+            fCfg.stackX = std::stod(xs) * G4UIcommand::ValueOf(xu);
+            fCfg.stackY = std::stod(ys) * G4UIcommand::ValueOf(yu);
+
+            return;
+        }
+
+        // --------------------------------------------------------
+        // LAYERS
+        if (cmd == fLayersClear)
+        {
+            fCfg.layers.clear();
+            return;
+        }
+
+        if (cmd == fLayerAdd)
+        {
+            G4Tokenizer tok(value);
+            auto mat = tok();
+            auto th = tok();
+            auto unit = tok();
+
+            fCfg.layers.push_back(
+                {mat, std::stod(th) * G4UIcommand::ValueOf(unit)});
+
+            return;
+        }
+
+        // --------------------------------------------------------
+        // MATERIALS
+        if (cmd == fMatCreate)
+        {
+            G4Tokenizer tok(value);
+            auto name = tok();
+            auto dens = tok();
+            auto unit = tok();
+
+            MaterialBuildSpec spec;
+            spec.density = std::stod(dens) * G4UIcommand::ValueOf(unit);
+            spec.finalized = false;
+            spec.useAtoms = true;
+
+            fCfg.matBuild[name] = spec;
+
+            return;
+        }
+
+        if (cmd == fMatAddMass)
+        {
+            G4Tokenizer tok(value);
+            auto mat = tok();
+            auto el = tok();
+            auto fr = tok();
+
+            fCfg.matBuild[mat].useAtoms = false;
+            fCfg.matBuild[mat].mass.push_back({el, std::stod(fr)});
+
+            return;
+        }
+
+        if (cmd == fMatFinalize)
+        {
+            G4Tokenizer tok(value);
+            auto mat = tok();
+            fCfg.matBuild[mat].finalized = true;
+
+            return;
+        }
+
+        // --------------------------------------------------------
+        // SOURCE (Physics)
+        if (cmd == fSourceType)
+        {
+            fCfg.sourceType = (value == "gun")
+                                  ? SourceType::Gun
+                                  : SourceType::Decay;
+
+            return;
+        }
+
+        if (cmd == fGunParticle)
+        {
+            fCfg.gun.particle = value;
+            return;
+        }
+
+        if (cmd == fGunEnergy)
+        {
+            fCfg.gun.energy = fGunEnergy->GetNewDoubleValue(value);
+            return;
+        }
+
+        if (cmd == fGunPos)
+        {
+            fCfg.gun.pos = fGunPos->GetNew3VectorValue(value);
+            return;
+        }
+
+        if (cmd == fGunDir)
+        {
+            G4Tokenizer tok(value);
+            auto dx = tok();
+            auto dy = tok();
+            auto dz = tok();
+
+            fCfg.gun.dir = G4ThreeVector(
+                               std::stod(dx),
+                               std::stod(dy),
+                               std::stod(dz))
+                               .unit();
+
+            return;
+        }
     }
-
-    // --------------------------------------------------------
-    // STACK SIZE
-    if (cmd == fStackXY)
-    {
-        G4Tokenizer tok(value);
-        auto xs = tok(); auto xu = tok();
-        auto ys = tok(); auto yu = tok();
-
-        fCfg.stackX = std::stod(xs) * G4UIcommand::ValueOf(xu);
-        fCfg.stackY = std::stod(ys) * G4UIcommand::ValueOf(yu);
-
-        markGeom();
-        return;
-    }
-
-    // --------------------------------------------------------
-    // LAYERS
-    if (cmd == fLayersClear)
-    {
-        fCfg.layers.clear();
-        markGeom();
-        return;
-    }
-
-    if (cmd == fLayerAdd)
-    {
-        G4Tokenizer tok(value);
-        auto mat  = tok();
-        auto th   = tok();
-        auto unit = tok();
-
-        fCfg.layers.push_back(
-            {mat, std::stod(th) * G4UIcommand::ValueOf(unit)}
-        );
-
-        markGeom();
-        return;
-    }
-
-    // --------------------------------------------------------
-    // MATERIALS
-    if (cmd == fMatCreate)
-    {
-        G4Tokenizer tok(value);
-        auto name = tok();
-        auto dens = tok();
-        auto unit = tok();
-
-        MaterialBuildSpec spec;
-        spec.density = std::stod(dens) * G4UIcommand::ValueOf(unit);
-        spec.finalized = false;
-        spec.useAtoms = true;
-
-        fCfg.matBuild[name] = spec;
-
-        markGeom();
-        return;
-    }
-
-    if (cmd == fMatAddMass)
-    {
-        G4Tokenizer tok(value);
-        auto mat = tok();
-        auto el  = tok();
-        auto fr  = tok();
-
-        fCfg.matBuild[mat].useAtoms = false;
-        fCfg.matBuild[mat].mass.push_back({el, std::stod(fr)});
-
-        markGeom();
-        return;
-    }
-
-    if (cmd == fMatFinalize)
-    {
-        G4Tokenizer tok(value);
-        auto mat = tok();
-        fCfg.matBuild[mat].finalized = true;
-
-        markGeom();
-        return;
-    }
-
-    // --------------------------------------------------------
-    // SOURCE (Physics)
-    if (cmd == fSourceType)
-    {
-        fCfg.sourceType = (value == "gun")
-                          ? SourceType::Gun
-                          : SourceType::Decay;
-
-        markPhysics();
-        return;
-    }
-
-    if (cmd == fGunParticle)
-    {
-        fCfg.gun.particle = value;
-        markPhysics();
-        return;
-    }
-
-    if (cmd == fGunEnergy)
-    {
-        fCfg.gun.energy = fGunEnergy->GetNewDoubleValue(value);
-        markPhysics();
-        return;
-    }
-
-    if (cmd == fGunPos)
-    {
-        fCfg.gun.pos = fGunPos->GetNew3VectorValue(value);
-        markPhysics();
-        return;
-    }
-
-    if (cmd == fGunDir)
-    {
-        G4Tokenizer tok(value);
-        auto dx = tok(); auto dy = tok(); auto dz = tok();
-
-        fCfg.gun.dir = G4ThreeVector(
-            std::stod(dx),
-            std::stod(dy),
-            std::stod(dz)
-        ).unit();
-
-        markPhysics();
-        return;
-    }
-}
 
 } // namespace

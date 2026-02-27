@@ -2,6 +2,8 @@
 
 #include "GaN_AlGan_battery_exp.h"
 #include "ExperimentMessenger.h"
+#include "DIContainer.h"
+#include "EventManager.h"
 
 /// Geant4
 #include "G4RunManager.hh"
@@ -17,6 +19,8 @@ namespace G4Worker
     class App
     {
     public:
+        using Container = G4Worker::Infrastructure::Container;
+
         App(int argc, char **argv);
         ~App() = default;
 
@@ -30,13 +34,17 @@ namespace G4Worker
         void Initialize(int argc, char **argv);
         void Run();
 
+        void ServiceRegistration();
+
     private:
         std::unique_ptr<ExperimentConfig> cfg;
 
         std::unique_ptr<G4UIExecutive> ui;
         std::unique_ptr<G4RunManager> runManager;
         std::unique_ptr<G4VisExecutive> visManager;
-        G4UImanager *uiManager = nullptr; // можно и raw pointer
+        G4UImanager *uiManager = nullptr;
         std::unique_ptr<Messengers::ExperimentMessenger> expMessenger;
+
+        std::shared_ptr<Container> services;
     };
 }

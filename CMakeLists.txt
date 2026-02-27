@@ -28,6 +28,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/Core/include/Detectors
     src/Core/include/SourceGenerators
     src/Core/include/Actions
+    src/Infrastructure
+    src/Infrastructure/Services
+    src/Infrastructure/Services/Interfaces
     src/Utils
     Experiments
 )

@@ -2,6 +2,7 @@
 
 #include "G4UImessenger.hh"
 #include "G4String.hh"
+#include "CommandBuilder.h"
 
 class G4UIdirectory;
 class G4UIcmdWithAString;
@@ -23,6 +24,7 @@ namespace G4Worker::Messengers
 
     private:
         ExperimentConfig &fCfg;
+        
         G4UIdirectory *fDir = nullptr;
 
         // common

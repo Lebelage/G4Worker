@@ -4,6 +4,7 @@
 #include "SourceGenerator.h"
 #include "RunAction.h"
 #include "SteppingAction.h"
+#include "Events.h"
 
 #include "FTFP_BERT.hh"
 #include "G4EmStandardPhysics_option4.hh"
@@ -18,12 +19,14 @@ namespace G4Worker
 {
     App::App(int argc, char **argv)
     {
+        ServiceRegistration();
+        
         Initialize(argc, argv);
     }
 
     void App::Initialize(int argc, char **argv)
     {
-        cfg = std::make_unique<ExperimentConfig>();   
+        cfg = std::make_unique<ExperimentConfig>();
 
         // UI режим?
         const bool interactive = (argc == 1);
@@ -48,7 +51,7 @@ namespace G4Worker
         runManager->SetUserAction(new RunAction());
 
         // SteppingAction зависит от детектора
-        auto *det = static_cast<const DetectorConstruction*>(runManager->GetUserDetectorConstruction());
+        auto *det = static_cast<const DetectorConstruction *>(runManager->GetUserDetectorConstruction());
         runManager->SetUserAction(new SteppingAction(det));
 
         // ВАЖНО: Initialize() должен пройти всегда, но DetectorConstruction обязан уметь строить fallback world,
@@ -76,5 +79,14 @@ namespace G4Worker
         uiManager->ApplyCommand("/control/execute init.mac");
 
         ui->SessionStart();
+    }
+
+    void App::ServiceRegistration()
+    {
+        services = std::make_shared<Container>();
+
+        services->RegisterSingleton<
+            G4Worker::Infrastructure::Services::Interfaces::IEventManager,
+            G4Worker::Infrastructure::Services::EventManager>();
     }
 }
