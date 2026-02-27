@@ -5,6 +5,8 @@ namespace G4Worker::Infrastructure::Services::Interfaces
 {
     struct IEventManager
     {
-        virtual ~IEventManager() = default;    
+        virtual ~IEventManager() = default;   
+        
+        virtual Utils::Event<>& OnReset() = 0;
     };
 }

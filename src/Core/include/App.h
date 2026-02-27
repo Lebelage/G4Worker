@@ -1,9 +1,6 @@
 #pragma once
 
-#include "GaN_AlGan_battery_exp.h"
-#include "ExperimentMessenger.h"
 #include "DIContainer.h"
-#include "EventManager.h"
 
 /// Geant4
 #include "G4RunManager.hh"
@@ -14,15 +11,22 @@
 /// std
 #include <memory>
 
+class ExperimentConfig;
+
+namespace G4Worker::Messengers {
+    class ExperimentMessenger;
+}
+
 namespace G4Worker
 {
+
     class App
     {
     public:
         using Container = G4Worker::Infrastructure::Container;
 
         App(int argc, char **argv);
-        ~App() = default;
+        ~App();
 
         App(const App &) = delete;
         App &operator=(const App &) = delete;
@@ -30,7 +34,13 @@ namespace G4Worker
         App(const App &&) = delete;
         App &operator=(const App &&) = delete;
 
-    public:
+        static Container& Services()
+        {
+            static Container services;
+            return services;  
+        }
+
+    public: 
         void Initialize(int argc, char **argv);
         void Run();
 
@@ -43,8 +53,7 @@ namespace G4Worker
         std::unique_ptr<G4RunManager> runManager;
         std::unique_ptr<G4VisExecutive> visManager;
         G4UImanager *uiManager = nullptr;
-        std::unique_ptr<Messengers::ExperimentMessenger> expMessenger;
+        std::unique_ptr<G4Worker::Messengers::ExperimentMessenger> expMessenger;
 
-        std::shared_ptr<Container> services;
     };
 }

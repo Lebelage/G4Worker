@@ -3,6 +3,8 @@
 #include "G4UImessenger.hh"
 #include "G4String.hh"
 #include "CommandBuilder.h"
+#include "CommandManager.h"
+
 
 class G4UIdirectory;
 class G4UIcmdWithAString;

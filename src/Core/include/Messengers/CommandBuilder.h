@@ -21,7 +21,7 @@ struct Param
         : name(std::move(n)), type(t), omittable(om) {}
 };
 
-namespace G4Worker
+namespace G4Worker::Messengers
 {
     class G4UICommandBuilder
     {

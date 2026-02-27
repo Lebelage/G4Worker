@@ -5,6 +5,10 @@
 #include "RunAction.h"
 #include "SteppingAction.h"
 #include "Events.h"
+#include "ExperimentMessenger.h"
+
+#include "GaN_AlGan_battery_exp.h"
+#include "EventManager.h"
 
 #include "FTFP_BERT.hh"
 #include "G4EmStandardPhysics_option4.hh"
@@ -24,6 +28,8 @@ namespace G4Worker
         Initialize(argc, argv);
     }
 
+    App::~App() = default;
+
     void App::Initialize(int argc, char **argv)
     {
         cfg = std::make_unique<ExperimentConfig>();
@@ -38,7 +44,7 @@ namespace G4Worker
         runManager->SetNumberOfThreads(8);
 
         // Messenger должен жить всё время работы приложения
-        expMessenger = std::make_unique<G4Worker::Messengers::ExperimentMessenger>(*cfg);
+        expMessenger = std::make_unique<Messengers::ExperimentMessenger>(*cfg);
 
         // Physics
         auto *phys = new FTFP_BERT();
@@ -83,9 +89,9 @@ namespace G4Worker
 
     void App::ServiceRegistration()
     {
-        services = std::make_shared<Container>();
+        auto &services = Services();
 
-        services->RegisterSingleton<
+        services.RegisterSingleton<
             G4Worker::Infrastructure::Services::Interfaces::IEventManager,
             G4Worker::Infrastructure::Services::EventManager>();
     }
