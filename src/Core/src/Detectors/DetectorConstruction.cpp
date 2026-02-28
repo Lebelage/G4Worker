@@ -9,8 +9,15 @@
 #include "G4UserLimits.hh"
 #include "G4NistManager.hh"
 
+#include "EventManager.h"
+#include "App.h"
+
+void OnHandle();
+
 G4Worker::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fCfg{cfg}
 {
+    auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
+    events->OnReset().Add(OnHandle);
 }
 
 G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
@@ -88,4 +95,11 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
     }
 
     return physWorld;
+}
+
+
+void OnHandle()
+{
+
+
 }

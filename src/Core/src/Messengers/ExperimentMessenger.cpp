@@ -97,6 +97,8 @@ namespace G4Worker::Messengers
 
     void ExperimentMessenger::SetNewValue(G4UIcommand *cmd, G4String value)
     {
+        auto* cm = new CommandManager();
+        cm->ApplyCommand();
         // --------------------------------------------------------
         // RESET
         if (cmd == fReset)
