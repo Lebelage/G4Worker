@@ -91,14 +91,19 @@ namespace G4Worker::Messengers
         delete fType;
         delete fReset;
         delete fDir;
+        delete applyCommand;
     }
 
     // ------------------------------------------------------------
 
     void ExperimentMessenger::SetNewValue(G4UIcommand *cmd, G4String value)
     {
-        auto* cm = new CommandManager();
-        cm->ApplyCommand();
+
+        if (cmd == applyCommand)
+        {
+            auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
+            events->OnReset().Invoke();
+        }
         // --------------------------------------------------------
         // RESET
         if (cmd == fReset)

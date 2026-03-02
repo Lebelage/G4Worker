@@ -17,6 +17,8 @@ namespace G4Worker
         G4double GetTotalThickness() const { return fTotalZ; }
         G4double GetStackTopZ() const { return fStackTopZ; }
 
+        void OnHandle();
+
     private:
         G4VPhysicalVolume *BuildStack();
 

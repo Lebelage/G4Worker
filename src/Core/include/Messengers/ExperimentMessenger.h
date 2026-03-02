@@ -5,7 +5,6 @@
 #include "CommandBuilder.h"
 #include "CommandManager.h"
 
-
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
@@ -26,7 +25,7 @@ namespace G4Worker::Messengers
 
     private:
         ExperimentConfig &fCfg;
-        
+
         G4UIdirectory *fDir = nullptr;
 
         // common
@@ -55,5 +54,8 @@ namespace G4Worker::Messengers
         G4UIcmdWithADoubleAndUnit *fGunEnergy = nullptr;
         G4UIcmdWith3VectorAndUnit *fGunPos = nullptr;
         G4UIcommand *fGunDir = nullptr;
+
+        // Apply flag
+        G4UIcommand *applyCommand;
     };
 }

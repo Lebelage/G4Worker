@@ -10,30 +10,25 @@ namespace G4Worker::Infrastructure
     class Container
     {
     public:
-        // TRANSIENT (новый объект каждый раз)
         template <typename Interface, typename Impl, typename... Args>
-        void Register(Args&&... args)
+        void Register(Args &&...args)
         {
             factories[typeid(Interface).hash_code()] =
                 [=]()
             {
                 return std::static_pointer_cast<void>(
-                    std::make_shared<Impl>(args...)
-                );
+                    std::make_shared<Impl>(args...));
             };
         }
 
-        // SINGLETON (один объект)
         template <typename Interface, typename Impl, typename... Args>
-        void RegisterSingleton(Args&&... args)
+        void RegisterSingleton(Args &&...args)
         {
             singletons[typeid(Interface).hash_code()] =
                 std::static_pointer_cast<void>(
-                    std::make_shared<Impl>(args...)
-                );
+                    std::make_shared<Impl>(args...));
         }
 
-        // RESOLVE
         template <typename Interface>
         std::shared_ptr<Interface> Resolve()
         {

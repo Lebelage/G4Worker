@@ -3,11 +3,14 @@
 
 namespace G4Worker::Infrastructure::Services
 {
-    class EventManager : Interfaces::IEventManager
+    class EventManager : public Interfaces::IEventManager
     {
-        public:
+    public:
         Utils::Event<> onReset;
 
-        Utils::Event<>& OnReset() override { return onReset; }
+        Utils::Event<> &OnReset() override
+        {
+            return onReset;
+        }
     };
 }

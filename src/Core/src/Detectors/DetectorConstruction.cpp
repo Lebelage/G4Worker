@@ -12,12 +12,17 @@
 #include "EventManager.h"
 #include "App.h"
 
+#include <iostream>
+
 void OnHandle();
 
 G4Worker::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fCfg{cfg}
 {
     auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
-    events->OnReset().Add(OnHandle);
+    events->OnReset().Add([this]()
+                          { this->OnHandle(); });
+    std::cout << "DetectorConstruction constructed\n";
+    std::cout << "EventManager instance A = " << events.get() << std::endl;
 }
 
 G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
@@ -97,9 +102,8 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
     return physWorld;
 }
 
-
-void OnHandle()
+void G4Worker::DetectorConstruction::OnHandle()
 {
 
-
+    std::cout << "OnHandle" << std::endl;
 }

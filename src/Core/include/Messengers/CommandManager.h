@@ -6,13 +6,15 @@ namespace G4Worker
 {
     class CommandManager
     {
-        public:
+    public:
         void ApplyCommand()
-        {   
+        {
             auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
-            events->OnReset();
 
+            std::cout << "EventManager instance B = " << events.get() << std::endl;
+
+            events->OnReset().Invoke();
+            std::cout << "ApplyCommand invoked\n";
         }
-
     };
 }

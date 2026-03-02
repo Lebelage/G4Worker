@@ -1,6 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <utility>
+#include <functional>
+#include <optional>
+#include <unordered_map>
+#include <vector>
 
 namespace G4Worker::Utils
 {
@@ -13,13 +18,14 @@ namespace G4Worker::Utils
 
         struct Entry
         {
-            std::weak_ptr<void> owner;
+            std::optional<std::weak_ptr<void>> owner;
             Handler handler;
         };
 
         template <typename T>
         HandlerId Add(std::shared_ptr<T> owner, Handler handler)
         {
+            std::cout << "OWNER ADD\n";
             HandlerId id = nextId++;
             handlers[id] = Entry{
                 owner,
@@ -29,9 +35,10 @@ namespace G4Worker::Utils
 
         HandlerId Add(Handler handler)
         {
+            std::cout << "NORMAL ADD\n";
             HandlerId id = nextId++;
             handlers[id] = Entry{
-                {},
+                std::nullopt,
                 std::move(handler)};
             return id;
         }
@@ -46,17 +53,21 @@ namespace G4Worker::Utils
             Remove(id);
         }
 
-        void operator()(Args... args)
+        void Invoke(Args... args)
         {
             std::vector<HandlerId> dead;
 
             for (auto &[id, entry] : handlers)
             {
-                if (!entry.owner.expired())
+                if (!entry.owner.has_value()) // permanent handler
                 {
-                    entry.handler(args...);
+                    std::invoke(entry.handler, args...);
                 }
-                else
+                else if (!entry.owner->expired()) // owner still alive
+                {
+                    std::invoke(entry.handler, args...);
+                }
+                else // owner dead → remove
                 {
                     dead.push_back(id);
                 }

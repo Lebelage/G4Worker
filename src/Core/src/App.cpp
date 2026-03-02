@@ -24,7 +24,6 @@ namespace G4Worker
     App::App(int argc, char **argv)
     {
         ServiceRegistration();
-        
         Initialize(argc, argv);
     }
 
