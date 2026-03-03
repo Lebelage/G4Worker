@@ -1,6 +1,8 @@
 #pragma once
 
 #include "DIContainer.h"
+#include "DetectorManager.h"
+
 
 /// Geant4
 #include "G4RunManager.hh"
@@ -15,6 +17,11 @@ class ExperimentConfig;
 
 namespace G4Worker::Messengers {
     class ExperimentMessenger;
+}
+
+namespace G4Worker::Infrastructure::Services::Interfaces
+{
+    class IEventManager;
 }
 
 namespace G4Worker
@@ -42,6 +49,9 @@ namespace G4Worker
 
     public: 
         void Initialize(int argc, char **argv);
+        
+        void InitializeLocalStorage();
+
         void Run();
 
         void ServiceRegistration();
@@ -55,5 +65,10 @@ namespace G4Worker
         G4UImanager *uiManager = nullptr;
         std::unique_ptr<G4Worker::Messengers::ExperimentMessenger> expMessenger;
 
+        std::unique_ptr<DetectorManager> detManager;
+        std::shared_ptr<Infrastructure::Services::Interfaces::IEventManager> events;
+    
+    private:
+        void OnUpdateGeometry();
     };
 }

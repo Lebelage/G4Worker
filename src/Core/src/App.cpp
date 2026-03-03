@@ -6,6 +6,7 @@
 #include "SteppingAction.h"
 #include "Events.h"
 #include "ExperimentMessenger.h"
+#include "FileProvider.h"
 
 #include "GaN_AlGan_battery_exp.h"
 #include "EventManager.h"
@@ -23,6 +24,7 @@ namespace G4Worker
 {
     App::App(int argc, char **argv)
     {
+        InitializeLocalStorage();
         ServiceRegistration();
         Initialize(argc, argv);
     }
@@ -31,6 +33,11 @@ namespace G4Worker
 
     void App::Initialize(int argc, char **argv)
     {
+        events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
+
+        events->OnReset().Add([this]()
+                              { this->OnUpdateGeometry(); });
+
         cfg = std::make_unique<ExperimentConfig>();
 
         // UI режим?
@@ -44,6 +51,9 @@ namespace G4Worker
 
         // Messenger должен жить всё время работы приложения
         expMessenger = std::make_unique<Messengers::ExperimentMessenger>(*cfg);
+
+        detManager = std::make_unique<DetectorManager>(*cfg);
+        // detManager->ApplyConfigChanges();
 
         // Physics
         auto *phys = new FTFP_BERT();
@@ -86,6 +96,12 @@ namespace G4Worker
         ui->SessionStart();
     }
 
+    void App::InitializeLocalStorage()
+    {
+        G4Worker::Utils::FileProvider::CreateDirectory("Experiments");
+        G4Worker::Utils::FileProvider::CreateFile("Experiments/AlGanExp.json");
+    }
+
     void App::ServiceRegistration()
     {
         auto &services = Services();
@@ -94,4 +110,29 @@ namespace G4Worker
             G4Worker::Infrastructure::Services::Interfaces::IEventManager,
             G4Worker::Infrastructure::Services::EventManager>();
     }
+
+    void App::OnUpdateGeometry()
+    {
+        // 1. Disable visualization — ок
+        uiManager->ApplyCommand("/vis/disable");
+
+        // 2. Apply geometry changes
+        detManager->ApplyConfigChanges();
+
+        // 3. Sync worker threads
+        runManager->BeamOn(0);
+
+        // 4. FULL scene rebuild instead of /vis/viewer/rebuild !!!
+        uiManager->ApplyCommand("/vis/scene/clear");
+        uiManager->ApplyCommand("/vis/scene/create");
+        uiManager->ApplyCommand("/vis/scene/add/volume world");
+        uiManager->ApplyCommand("/vis/sceneHandler/attach");
+
+        // 5. Enable visualization
+        uiManager->ApplyCommand("/vis/enable");
+
+        // 6. Refresh viewer
+        uiManager->ApplyCommand("/vis/viewer/refresh");
+    }
+
 }

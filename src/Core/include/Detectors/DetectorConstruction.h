@@ -14,17 +14,19 @@ namespace G4Worker
         G4VPhysicalVolume *Construct() override;
 
     public:
+        G4VPhysicalVolume* BuildWorld() const;
+
         G4double GetTotalThickness() const { return fTotalZ; }
         G4double GetStackTopZ() const { return fStackTopZ; }
 
         void OnHandle();
 
     private:
-        G4VPhysicalVolume *BuildStack();
+        G4VPhysicalVolume *BuildStack() const;
 
     private:
         ExperimentConfig &fCfg;
-        G4double fTotalZ = 0.0;
-        G4double fStackTopZ = 0.0;
+        mutable G4double fTotalZ = 0.0;
+        mutable G4double fStackTopZ = 0.0;
     };
 }

@@ -21,32 +21,35 @@ G4Worker::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fC
     auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
     events->OnReset().Add([this]()
                           { this->OnHandle(); });
-    std::cout << "DetectorConstruction constructed\n";
-    std::cout << "EventManager instance A = " << events.get() << std::endl;
 }
 
 G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
 {
+
+    G4cout << ">>> Construct CALLED, thread = "
+           << G4Threading::G4GetThreadId()
+           << G4endl;
+
+    return BuildWorld();
+}
+
+G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildWorld() const
+{
     if (fCfg.type == ExpType::Stack)
         return BuildStack();
 
-    if (fCfg.type == ExpType::None)
-    {
-        auto worldMat = G4NistManager::Instance()
-                            ->FindOrBuildMaterial("G4_Galactic");
+    // fallback
+    auto worldMat =
+        G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
-        auto solidWorld =
-            new G4Box("World", 1 * mm, 1 * mm, 1 * mm);
+    auto solidWorld = new G4Box("World", 1 * mm, 1 * mm, 1 * mm);
+    auto logicWorld = new G4LogicalVolume(solidWorld, worldMat, "World");
 
-        auto logicWorld =
-            new G4LogicalVolume(solidWorld, worldMat, "World");
-
-        return new G4PVPlacement(
-            nullptr, {}, logicWorld, "World", nullptr, false, 0);
-    }
+    return new G4PVPlacement(
+        nullptr, {}, logicWorld, "World", nullptr, false, 0);
 }
 
-G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
+G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack() const
 {
     Materials mats(fCfg);
 
@@ -104,6 +107,5 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack()
 
 void G4Worker::DetectorConstruction::OnHandle()
 {
-
     std::cout << "OnHandle" << std::endl;
 }

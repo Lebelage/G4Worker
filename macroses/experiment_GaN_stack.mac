@@ -43,8 +43,8 @@
 /exp/source/gun/pos 0 0 20 um
 /exp/source/gun/dir 0 0 -1
 
-# Только refresh viewer
-/vis/viewer/refresh
+/exp/apply
 
-/run/reinitializeGeometry
-/vis/drawVolume
+
+# /vis/viewer/refresh
+# /vis/drawVolume

@@ -74,6 +74,8 @@ namespace G4Worker::Messengers
                                  Param("dx", 'd'),
                                  Param("dy", 'd'),
                                  Param("dz", 'd'));
+
+        applyCommand = builder.Command("/exp/apply");                        
     }
 
     // ------------------------------------------------------------
