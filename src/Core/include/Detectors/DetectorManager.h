@@ -11,7 +11,7 @@
 #include "G4SolidStore.hh"
 struct ExperimentConfig;
 
-namespace G4Worker
+namespace G4Worker::Detectors
 {
     class DetectorManager
     {
@@ -20,7 +20,6 @@ namespace G4Worker
 
         void ApplyConfigChanges()
         {
-            // 0) только master
             if (!G4Threading::IsMasterThread())
             {
                 G4Exception("DetectorManager", "GeomUpdate-NotMaster", JustWarning,

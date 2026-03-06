@@ -10,7 +10,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4SystemOfUnits.hh"
 
-SteppingAction::SteppingAction(const G4Worker::DetectorConstruction* det) : fDet(det) {}
+SteppingAction::SteppingAction(const G4Worker::Detectors::DetectorConstruction* det) : fDet(det) {}
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {

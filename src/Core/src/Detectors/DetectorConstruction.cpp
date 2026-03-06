@@ -16,24 +16,16 @@
 
 void OnHandle();
 
-G4Worker::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fCfg{cfg}
+G4Worker::Detectors::DetectorConstruction::DetectorConstruction(ExperimentConfig &cfg) : fCfg{cfg}
 {
     auto events = App::Services().Resolve<Infrastructure::Services::Interfaces::IEventManager>();
     events->OnReset().Add([this]()
                           { this->OnHandle(); });
 }
 
-G4VPhysicalVolume *G4Worker::DetectorConstruction::Construct()
-{
+G4VPhysicalVolume *G4Worker::Detectors::DetectorConstruction::Construct(){ return BuildWorld(); }
 
-    G4cout << ">>> Construct CALLED, thread = "
-           << G4Threading::G4GetThreadId()
-           << G4endl;
-
-    return BuildWorld();
-}
-
-G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildWorld() const
+G4VPhysicalVolume *G4Worker::Detectors::DetectorConstruction::BuildWorld() const
 {
     if (fCfg.type == ExpType::Stack)
         return BuildStack();
@@ -49,7 +41,7 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildWorld() const
         nullptr, {}, logicWorld, "World", nullptr, false, 0);
 }
 
-G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack() const
+G4VPhysicalVolume *G4Worker::Detectors::DetectorConstruction::BuildStack() const
 {
     Materials mats(fCfg);
 
@@ -105,7 +97,7 @@ G4VPhysicalVolume *G4Worker::DetectorConstruction::BuildStack() const
     return physWorld;
 }
 
-void G4Worker::DetectorConstruction::OnHandle()
+void G4Worker::Detectors::DetectorConstruction::OnHandle()
 {
     std::cout << "OnHandle" << std::endl;
 }

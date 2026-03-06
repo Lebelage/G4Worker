@@ -2,7 +2,7 @@
 
 #include "DIContainer.h"
 #include "DetectorManager.h"
-
+#include "GeantCore.h"
 
 /// Geant4
 #include "G4RunManager.hh"
@@ -57,15 +57,8 @@ namespace G4Worker
         void ServiceRegistration();
 
     private:
-        std::unique_ptr<ExperimentConfig> cfg;
-
-        std::unique_ptr<G4UIExecutive> ui;
-        std::unique_ptr<G4RunManager> runManager;
-        std::unique_ptr<G4VisExecutive> visManager;
-        G4UImanager *uiManager = nullptr;
-        std::unique_ptr<G4Worker::Messengers::ExperimentMessenger> expMessenger;
-
-        std::unique_ptr<DetectorManager> detManager;
+        std::shared_ptr<ExperimentConfig> cfg;
+        std::unique_ptr<GeantCore> geant;
         std::shared_ptr<Infrastructure::Services::Interfaces::IEventManager> events;
     
     private:

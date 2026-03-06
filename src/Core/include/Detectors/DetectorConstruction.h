@@ -3,7 +3,7 @@
 
 struct ExperimentConfig;
 
-namespace G4Worker
+namespace G4Worker::Detectors
 {
     class DetectorConstruction : public G4VUserDetectorConstruction
     {

@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <exception>
+#include "AppPaths.h"
 
 namespace fs = std::filesystem;
 
@@ -42,6 +43,33 @@ namespace G4Worker::Utils
                 return file.good();
             }
             catch (std::exception ex)
+            {
+                return false;
+            }
+        }
+
+        static bool CreateExperimentFile(const std::string &fileName)
+        {
+            try
+            {
+                fs::path dirPath = Utils::Constants::AppPaths::__EXPERIMENTS_DIR_NAME;
+                fs::path filePath = dirPath / fileName;
+
+                if (!fs::exists(dirPath))
+                {
+                    fs::create_directories(dirPath);
+                }
+
+                if (fs::exists(filePath))
+                {
+                    return false;
+                }
+
+                std::ofstream file(filePath);
+
+                return file.good();
+            }
+            catch (const std::exception &ex)
             {
                 return false;
             }

@@ -32,6 +32,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/Infrastructure/Services
     src/Infrastructure/Services/Interfaces
     src/Utils
+    src/Utils/Constants
     Experiments
 )
 
@@ -40,14 +41,22 @@ target_link_libraries(${PROJECT_NAME}
     nlohmann_json::nlohmann_json
 )
 
-# Найти все .mac файлы
+# 1. Находим все .mac файлы
 file(GLOB MACRO_FILES "${CMAKE_SOURCE_DIR}/macroses/*.mac")
 
+# 2. Определяем целевую директорию для удобства
+set(DEST_DIR "${CMAKE_BINARY_DIR}/AppConfigs")
+
+# 3. Создаем цель для копирования
 add_custom_target(copy_macros ALL
+    # Сначала создаем папку AppConfigs (если её нет)
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${DEST_DIR}
+    # Затем копируем файлы
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${MACRO_FILES}
-            ${CMAKE_BINARY_DIR}
-    COMMENT "Copying .mac files to build directory"
+            ${DEST_DIR}
+    COMMENT "Copying .mac files to ${DEST_DIR}"
 )
 
+# 4. Устанавливаем зависимость
 add_dependencies(${PROJECT_NAME} copy_macros)
